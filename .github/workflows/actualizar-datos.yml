@@ -26,7 +26,7 @@ jobs:
           cache: pip
 
       - name: Instalar dependencias
-        run: pip install -r requirements.txt
+        run: pip install -r requirements-gh.txt
 
       - name: Generar datos.json
         run: python worker.py
