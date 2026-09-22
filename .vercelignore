@@ -1,0 +1,8 @@
+worker.py
+requirements.txt
+data
+.github
+.gitattributes
+.gitignore
+__pycache__
+.venv

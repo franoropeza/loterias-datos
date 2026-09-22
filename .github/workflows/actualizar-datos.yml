@@ -1,0 +1,43 @@
+name: Actualizar datos.json
+
+on:
+  schedule:
+    # GitHub Actions corre en UTC. Cada 2 horas, en el minuto 10.
+    - cron: "10 */2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: actualizar-datos
+  cancel-in-progress: false
+
+jobs:
+  generar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Generar datos.json
+        run: python worker.py
+
+      - name: Publicar cambios
+        run: |
+          git add data/historico_sorteos.csv loterias/datos.json
+          if git diff --staged --quiet; then
+            echo "Sin cambios"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Actualiza datos.json"
+          git push
